@@ -79,7 +79,7 @@ architecture behavioral of mcrypton_top is
             data_out => final_pi
         );
 
-        FINAL_PI: pi port map(
+        FINAL_P: pi port map(
             data_in => final_pi,
             data_out => final_tau2
         );
@@ -97,12 +97,12 @@ architecture behavioral of mcrypton_top is
                 data_state <= plaintext;
                 key_state <= key;
                 round_counter <= "0000"; -- the initial key addition is round 0
-                ciphertext <= x"0000000000000000";
+                final_tau1 <= x"0000000000000000";
             elsif rising_edge(clk) then
                 data_state <= data_tau;
                 key_state <= key_updated;
                 round_counter
-                    <= std_logic_vector((unsigned(round_counter) + 1) mod 13);
+                    <= std_logic_vector((unsigned(round_counter) + 1));
 
                 final_tau1 <= data_sigma; -- TODO: use case statement?
             end if;

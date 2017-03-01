@@ -14,11 +14,11 @@ architecture structural of key_schedule is
     type masking_words is array(0 to 3) of std_logic_vector(15 downto 0);
     constant masks: masking_words := (x"F000", x"0F00", x"00F0", x"000F");
 
-    type round_constants is array(0 to 12) of std_logic_vector(3 downto 0);
+    type round_constants is array(0 to 15) of std_logic_vector(3 downto 0);
     constant rcs: round_constants := ("0001", "0010", "0100", "1000",
                                       "0011", "0110", "1100", "1011",
                                       "0101", "1010", "0111", "1110",
-                                      "1111");
+                                      "1111", "0000", "0000", "0000");
 
     signal T_tmp: std_logic_vector(15 downto 0);
     signal T: std_logic_vector(15 downto 0);
@@ -41,7 +41,7 @@ architecture structural of key_schedule is
             -- ... xor C[r]
             T(15 - 4*i downto 15 - 4*i - 3)
                 <= T_tmp(15 - 4*i downto 15 - 4*i - 3)
-                   xor rcs(unsigned(round_counter));
+                   xor rcs(to_integer(unsigned(round_counter)));
         end generate;
 
         T0 <= T and masks(0);
