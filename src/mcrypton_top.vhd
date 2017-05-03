@@ -109,7 +109,10 @@ architecture behavioral of mcrypton_top is
                     key_state <= key_updated;
                     round_counter <= std_logic_vector((unsigned(round_counter) + 1));
 
-                    final_tau1 <= data_sigma; -- TODO: use case statement?
+                    case round_counter is
+                        when "1100" => final_tau1 <= data_sigma;
+                        when others => final_tau1 <= (others => '0');
+                    end case;
                 end if;
             end if;
         end process;

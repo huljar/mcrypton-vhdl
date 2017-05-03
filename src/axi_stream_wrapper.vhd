@@ -23,7 +23,7 @@ architecture behavioral of axi_stream_wrapper is
 
     constant plaintext_reads: natural := 2;
     constant key_reads: natural := 4;
-    constant active_cycles: natural := 13;
+    constant active_cycles: natural := 14;
     constant ciphertext_writes: natural := 2;
 
     signal state: state_type;

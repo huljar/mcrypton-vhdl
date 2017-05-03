@@ -29,6 +29,7 @@ LIBRARY ieee;
 USE ieee.std_logic_1164.ALL;
 USE std.textio.ALL;
 USE ieee.std_logic_textio.ALL;
+USE work.util.ALL;
  
 -- Uncomment the following library declaration if using
 -- arithmetic functions with Signed or Unsigned values
@@ -42,6 +43,9 @@ ARCHITECTURE behavior OF mcrypton_tb IS
     -- Component Declaration for the Unit Under Test (UUT)
  
     COMPONENT mcrypton_top
+    GENERIC(
+         k : key_enum
+    );
     PORT(
          plaintext : IN  std_logic_vector(63 downto 0);
          key : IN  std_logic_vector(95 downto 0);
@@ -67,7 +71,9 @@ ARCHITECTURE behavior OF mcrypton_tb IS
 BEGIN
  
 	-- Instantiate the Unit Under Test (UUT)
-   uut: mcrypton_top PORT MAP (
+   uut: mcrypton_top GENERIC MAP (
+          k => K_96
+        ) PORT MAP (
           plaintext => plaintext,
           key => key,
           clk => clk,
