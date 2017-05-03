@@ -1,10 +1,12 @@
 library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
+use work.util.all;
 
 entity mcrypton_top is
+    generic(k: key_enum);
     port(plaintext:  in std_logic_vector(63 downto 0);
-         key:        in std_logic_vector(95 downto 0);
+         key:        in std_logic_vector(key_bits(k)-1 downto 0);
          clk:        in std_logic;
          reset:      in std_logic;
          ciphertext: out std_logic_vector(63 downto 0)
@@ -18,7 +20,7 @@ architecture behavioral of mcrypton_top is
            data_pi,
            data_tau: std_logic_vector(63 downto 0);
     signal key_state,
-           key_updated: std_logic_vector(95 downto 0);
+           key_updated: std_logic_vector(key_bits(k)-1 downto 0);
     signal round_key: std_logic_vector(63 downto 0);
     signal round_counter: std_logic_vector(3 downto 0);
     signal final_tau1,
@@ -44,9 +46,10 @@ architecture behavioral of mcrypton_top is
     end component;
 
     component key_schedule
-        port(data_in:       in std_logic_vector(95 downto 0);
+        generic(k: key_enum);
+        port(data_in:       in std_logic_vector(key_bits(k)-1 downto 0);
              round_counter: in std_logic_vector(3 downto 0);
-             data_out:      out std_logic_vector(95 downto 0);
+             data_out:      out std_logic_vector(key_bits(k)-1 downto 0);
              round_key:     out std_logic_vector(63 downto 0)
         );
     end component;
@@ -67,7 +70,9 @@ architecture behavioral of mcrypton_top is
             data_out => data_tau
         );
 
-        KS: key_schedule port map(
+        KS: key_schedule generic map(
+            k => k
+        ) port map(
             data_in => key_state,
             round_counter => round_counter,
             data_out => key_updated,
@@ -91,20 +96,21 @@ architecture behavioral of mcrypton_top is
 
         data_sigma <= data_state xor round_key;
 
-        process(clk, reset, plaintext, key)
+        process(clk)
         begin
-            if reset = '1' then
-                data_state <= plaintext;
-                key_state <= key;
-                round_counter <= "0000"; -- the initial key addition is round 0
-                final_tau1 <= x"0000000000000000";
-            elsif rising_edge(clk) then
-                data_state <= data_tau;
-                key_state <= key_updated;
-                round_counter
-                    <= std_logic_vector((unsigned(round_counter) + 1));
+            if rising_edge(clk) then
+                if reset = '1' then
+                    data_state <= plaintext;
+                    key_state <= key;
+                    round_counter <= "0000"; -- the initial key addition is round 0
+                    final_tau1 <= (others => '0');
+                else
+                    data_state <= data_tau;
+                    key_state <= key_updated;
+                    round_counter <= std_logic_vector((unsigned(round_counter) + 1));
 
-                final_tau1 <= data_sigma; -- TODO: use case statement?
+                    final_tau1 <= data_sigma; -- TODO: use case statement?
+                end if;
             end if;
         end process;
     end architecture;
