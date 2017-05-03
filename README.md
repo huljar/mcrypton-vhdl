@@ -2,13 +2,15 @@
 
 This is an implementation of the mCrypton lightweight block cipher
 as described in [this paper](http://link.springer.com/chapter/10.1007/11604938_19).
-It encrypts individual blocks of 64 bit length with a 96 bit key.
+It encrypts individual blocks of 64 bit length with a 64, 96, or 128 bit key.
 
-## Limitations
+## Xilinx Vivado project file
 
-Currently, only the 96 bit version of mCrypton is supported. In
-a future release, the 64 and 128 bit versions are planned to be
-supported as well.
+The Vivado project file *(&ast;.xpr)* is configured to use the *Digilent Zybo*
+FPGA board for synthesis. This board is not available by default in Vivado
+(at least not if you are using the WebPACK edition). To obtain the required
+board files for the *Zybo* (and other boards by Digilent), refer to
+[this wiki entry](https://reference.digilentinc.com/reference/software/vivado/board-files).
 
 ## License
 The code is licensed under the terms of the MIT license. For more
