@@ -132,7 +132,7 @@ BEGIN
       assert (S_AXIS_TREADY = '0') report "ERROR: axi slave is still ready after reading data!" severity error;
       
       -- wait for processing
-      wait for clk_period*13;
+      wait for clk_period*14;
       assert (M_AXIS_TVALID = '1') report "ERROR: axi master is not ready in time!" severity error;
       
       -- read ciphertext
